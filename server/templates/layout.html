@@ -8,7 +8,7 @@
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='override.css') }}">
 
-  <title>Maybe Studio</title>
+  <title>Whale Bank</title>
 </head>
 <body>
   <div class="navbar navbar-inverse navbar-fixed-top">
@@ -19,15 +19,21 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{{ url_for('front') }}">부트스트랩 테스트</a>
+            <a class="navbar-brand" href="{{ url_for('front') }}">Whale Bank</a>
           </div>
           <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-              <li class="active"><a href="#">홈으로</a></li>
-              <li><a href="#about">부트스트랩이란</a></li>
+              <li><a href="#">홈으로</a></li>
+              <li><a href="#about">Whale Bank란</a></li>
               <li><a href="#contact">문의하기</a></li>
 
-              <li class="pull-right"><a href="#">addasda</a></li>
+              {% if not session.logged_in %}
+                <li class="pull-right"><a href="{{ url_for('signin') }}">로그인</a></li>
+                <li class="pull-right"><a href="{{ url_for('signup') }}">등록</a></li>
+              {% else %}
+                <li class="pull-right"><a href="{{ url_for('signout') }}">로그아웃</a></li>
+                <li class="pull-right"><a href="{{ url_for('mypage') }}">내 저금통</a></li>
+              {% endif %}
             </ul>
           </div>
         </div>
@@ -36,15 +42,7 @@
     
 
     <div style="margin-top: 100px;">
-    {% if not session.logged_in %}
-      <a href="{{ url_for('signin') }}">Sign In</a>
-      <a href="{{ url_for('signup') }}">Sign Up</a>
-    {% else %}
-      <a href="{{ url_for('signout') }}">Sign Out</a>
-      <a href="{{ url_for('mypage') }}">My Page</a>
-    {% endif %}
     </div>
-
     {% for message in get_flashed_messages() %}
       <div class="flash">{{ message }}</div>
     {% endfor %}
