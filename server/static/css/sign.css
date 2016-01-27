@@ -1,0 +1,63 @@
+.sign-page {
+	margin: 0px auto;
+	padding: 30px 30px 30px 30px;
+	width: 500px;
+	border-radius: 10px;
+	background-color: rgb(245,245,245);
+}
+.sign-page label,
+.sign-page input { 
+	margin-top: 15px;
+}
+.sign-page h2 {
+	padding-bottom: 12px;
+	border-bottom: 1px solid #ddd;
+}
+@media screen and (max-width: 800px) {
+}
+
+.sub-page {
+	margin: 0px auto;
+	margin-top: 15px;
+	padding: 15px 15px 15px 15px;
+	width: 500px;
+	border-radius: 10px;
+	background-color: rgb(245,245,245);
+}
+
+#login {
+	width: 300px;
+}
+
+.link {
+	margin-top: 25px;
+	font-size: 14px;
+}
+
+.btn-space {
+	margin-top: 20px;
+}
+
+.btn {
+	margin-left: 10px;
+	margin-right:10px;
+	width: 150px;
+}
+@media screen and (max-width: 600px) {
+
+	.sign-page {
+		width: 90%;
+	}
+	.sign-page label,
+	.sign-page input { 
+		margin-top: 5px;
+	}
+
+	.sub-page {
+		width: 90%;
+	}
+
+	#login{
+		width: 70%;
+	}
+}

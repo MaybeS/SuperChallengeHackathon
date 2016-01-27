@@ -1,0 +1,25 @@
+.fl{ float: left }
+.fr{ float: right; }
+.clear{ *zoom: 1; }
+.clear:after{ display: block; content: ""; clear: both }
+
+.img-front {
+	width: 700px;
+}
+
+.flash { 
+	margin: 0px auto;
+	width: 500px;
+	padding: 0.5em;
+	border: 1px solid #AACBE2;
+	border-radius: 3px;
+	background: #CEE5F5; 
+}
+
+.error { 
+	margin: 0px auto;
+	width: 500px;
+	padding: 0.5em;
+	border-radius: 3px;
+	background: #F0D6D6; 
+}

@@ -50,27 +50,27 @@ class User(object):
                 session['logged_in'] = True
                 self.signed_in = True
                 self.name = self.db.execute('select username from userdata where email=\'' + request.form['email'] + '\'').fetchone()
-                flash('Welcom ' + self.name[0])
+                flash('환영해요, ' + self.name[0])
         return error
 
     def signup(self, uid, name, email, pwss):
         error = None
         cur = self.db.cursor()
 
-        if "" in [email, name, pwss, uid]:
-            error = "Filed is Empty!"
-        if not "@" in email:
-            error = "mail type error"
+        if '' in [email, name, pwss, uid]:
+            error = "필드가 비어있어요"
+        elif not "@" in email:
+            error = "메일 형식이 올바르지 않아요"
         else:
             email_ = cur.execute(u'SELECT EXISTS (SELECT email FROM userdata WHERE email = ?)', (email, )).fetchone()
             uid_ = cur.execute(u'SELECT EXISTS (SELECT userid FROM userdata WHERE userid = ?)', (uid, )).fetchone()
 
             if email_[0] == 0 and uid_[0] == 0:
-                flash('Account Created!')
+                flash('계정이 만들어졌어요, ' + name)
                 self.db.execute('insert into userdata (email, username, userid, password) values (?, ?, ?, ?)', [email, name, uid, pwss])
                 self.db.commit()
             else:
-                error = "Already Exist"
+                error = "이미 존재하는 아이디/이메일 입니다."
         return error
     
     def changeinfo(self):
