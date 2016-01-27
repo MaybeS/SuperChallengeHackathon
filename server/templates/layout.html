@@ -39,14 +39,15 @@
         </div>
   </div>
   <div class="container">
-    
-
     <div style="margin-top: 100px;">
     </div>
     {% for message in get_flashed_messages() %}
       <div class="flash">{{ message }}</div>
     {% endfor %}
-    {% block body %}{% endblock %}
+
+      <div class="text-center">
+        {% block body %}{% endblock %}
+      </div>
     </div>
   </div>
 </body>

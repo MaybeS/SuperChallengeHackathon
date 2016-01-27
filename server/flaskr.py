@@ -53,21 +53,21 @@ class User(object):
                 flash('Welcom ' + self.name[0])
         return error
 
-    def signup(self, email, name, pwss, pwsc):
+    def signup(self, uid, name, email, pwss):
         error = None
         cur = self.db.cursor()
 
-        if "" in [email, name, pwss, pwsc]:
+        if "" in [email, name, pwss, uid]:
             error = "Filed is Empty!"
-        elif pwss != pwsc:
-            error = 'Password does not match'
+        if not "@" in email:
+            error = "mail type error"
         else:
             email_ = cur.execute(u'SELECT EXISTS (SELECT email FROM userdata WHERE email = ?)', (email, )).fetchone()
-            name_ = cur.execute(u'SELECT EXISTS (SELECT username FROM userdata WHERE username = ?)', (name, )).fetchone()
-            
-            if email_[0] == 0 and name_[0] == 0:
+            uid_ = cur.execute(u'SELECT EXISTS (SELECT userid FROM userdata WHERE userid = ?)', (uid, )).fetchone()
+
+            if email_[0] == 0 and uid_[0] == 0:
                 flash('Account Created!')
-                self.db.execute('insert into userdata (email, username, password) values (?, ?, ?)', [email, name, pwss])
+                self.db.execute('insert into userdata (email, username, userid, password) values (?, ?, ?, ?)', [email, name, uid, pwss])
                 self.db.commit()
             else:
                 error = "Already Exist"
@@ -122,17 +122,18 @@ def add_entry():
 def signup():
     error = None
     if request.method == 'POST':
-        email = request.form['email']
+        userid = request.form['userid']
         name = request.form['username']
+        email = request.form['email']
         pwss = request.form['password']
-        pwsc = request.form['passconf']
-
-        if "" in [email, name, pwss, pwsc]:
-            error = 'Empty Filed'
-        else:
+        chkbox = request.form.getlist('chkbox')
+        if(len(chkbox)):
             user = User(email)
-            error = user.signup(email, name, pwss, pwsc)
+            error = user.signup(userid, name, email, pwss)
+        else:
+            error = '약관에 동의해야합니다.'
         return render_redirect('signup.html', 'signin', error)
+
     else:
         return render_template('signup.html', error=error)
 
