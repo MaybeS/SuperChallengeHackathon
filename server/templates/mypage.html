@@ -1,21 +1,37 @@
 {% extends "layout.html" %}
 {% block body %}
-  {% if session.logged_in %}
-    <form action="{{ url_for('add_entry') }}" method="post" class="add-entry">
-      <dl>
-        <dt>Title:
-        <dd><input type="text" size="30" name="title">
-        <dt>Text:
-        <dd><textarea name="text" rows="5" cols="40"></textarea>
-        <dd><input type="submit" value="Share">
-      </dl>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/page.css') }}">
+
+<div class="text-center">
+  {% if session.signin %}
+    <form action="{{ url_for('add_entry') }}" method="post" class="mypage">
+      {% for entry in entries %}
+        <li><h2>{{ entry.title }}</h2>{{ entry.text|safe }}
+      {% endfor %}
+
+        <div class="main-content">
+          <h2>{{ username }}의 저금통</h2>
+        </div>
+      <div class="main-content">
+        <div class="img-circle img-back">
+          <i class="fa fa-plus img-circle center-img"></i>
+        </div>
+        <h4>새 저금통 등록하기</h4>
+      </div>
     </form>
-  {% endif %}
-  <ul class="entries">
-  {% for entry in entries %}
-    <li><h2>{{ entry.title }}</h2>{{ entry.text|safe }}
   {% else %}
-    <li><em>Unbelievable.  No entries here so far</em>
-  {% endfor %}
+    <div class="main-content">
+      <h2>로그인되지 않았습니다.</h2>
+      <div class="inner-content">
+        이미 아이디가 있으신가요?
+        <a id="signup" class="link text" href="{{ url_for('signin') }}">로그인하세요</a>
+      </div>
+      <div class="inner-content">
+        아직 아이디가 없으신가요?
+        <a id="signup" class="link text" href="{{ url_for('signup') }}">새로 만들어보세요</a>
+      </div>
+    </div>
+  {% endif %}
+</div>
   </ul>
 {% endblock %}

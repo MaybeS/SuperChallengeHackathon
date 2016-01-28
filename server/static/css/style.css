@@ -7,6 +7,29 @@
 	width: 700px;
 }
 
+body {
+	background-color: #eaeaea;
+}
+
+.center-img {
+	width: 100px;
+	height: 100px;
+	font-size: 86px;
+	padding: 10px 10px 10px 10px;
+	background-color: rgb(225,225,225);
+}
+.img-back {
+	width: 116px;
+	height: 116px;
+	margin: 5px auto;
+	padding: 8px 8px 8px 8px;
+	cursor: pointer;
+	background-color: rgb(200,200,200);
+}
+.img-back:hover {
+	background-color: rgb(15,121,225);
+}
+
 .flash { 
 	margin: 0px auto;
 	width: 500px;
@@ -22,4 +45,11 @@
 	padding: 0.5em;
 	border-radius: 3px;
 	background: #F0D6D6; 
+}
+
+#brand {
+	width: 48px;
+	height: 48px;
+	cursor: pointer;
+	margin-right: 25px;
 }

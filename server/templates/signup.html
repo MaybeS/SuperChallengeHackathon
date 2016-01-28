@@ -1,12 +1,12 @@
 {% extends "layout.html" %}
 {% block body %}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/sign.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/page.css') }}">
 
 <div class="text-center">
   {% if error %}<p class="error"><strong>오류:</strong> {{ error }}{% endif %}
   <form action="{{ url_for('signup') }}" method="post">
-  <div class="sign-page">
-    <h2>등록하기</h2>
+  <div class="main-content">
+    <h2>Whale Bank에 등록하기</h2>
     <div>
       <label class="text pull-left">아이디</label>
       <input class="form-control" type="text" name="userid">
@@ -30,7 +30,7 @@
     </div>
   </div>
 
-    <div class="sub-page">
+    <div class="sub-content">
       <div class="checkbox">
         <label >
           <input class="checkbox" type="checkbox" value="" name="chkbox">

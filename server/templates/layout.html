@@ -1,12 +1,16 @@
 <!doctype html>
 <head>
-
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/override.css') }}">
+
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+  <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
 
   <title>Whale Bank</title>
 </head>
@@ -19,20 +23,19 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="{{ url_for('front') }}">Whale Bank</a>
+            <img id="brand" src="static\resource\icon.png" onclick="location.href = '{{ url_for('front') }}'; return false">
           </div>
           <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-              <li><a href="#">홈으로</a></li>
               <li><a href="#about">Whale Bank란</a></li>
               <li><a href="#contact">문의하기</a></li>
 
-              {% if not session.logged_in %}
-                <li class="pull-right"><a href="{{ url_for('signin') }}">로그인</a></li>
-                <li class="pull-right"><a href="{{ url_for('signup') }}">등록</a></li>
+              {% if not session.signin %}
+                <li class="pull-right"><a id="nav-signin" href="{{ url_for('signin') }}">로그인</a></li>
+                <li class="pull-right"><a id="nav-signup" href="{{ url_for('signup') }}">등록</a></li>
               {% else %}
-                <li class="pull-right"><a href="{{ url_for('signout') }}">로그아웃</a></li>
-                <li class="pull-right"><a href="{{ url_for('mypage') }}">내 저금통</a></li>
+                <li class="pull-right"><a id="nav-signout" href="{{ url_for('signout') }}">로그아웃</a></li>
+                <li class="pull-right"><a id="nav-mypage" href="{{ url_for('mypage') }}">내 저금통</a></li>
               {% endif %}
             </ul>
           </div>

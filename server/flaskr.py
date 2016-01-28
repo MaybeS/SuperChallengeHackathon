@@ -1,3 +1,4 @@
+#!/usr/bin/python
 #-*- coding: utf-8 -*-
 """
 	a microblog example application written as Flask tutorial
@@ -8,109 +9,35 @@ import os
 import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
 from contextlib import closing
+from wb_user import User
+from wb_db import database
 
 app = Flask(__name__)
-app.config.update(dict(
-    DATABASE=os.path.join(app.root_path, 'flaskr.db'),
-    DEBUG=True,
-    SECRET_KEY='development key',
-    USERNAME='admin',
-    PASSWORD='default'
-))
-app.config.from_envvar('FLASKR_SETTINGS', silent=True)
-
-def render_redirect(template, url, error):
-    if error == None:
-        return redirect(url_for(url))
-    return render_template(template, error=error)
-
-class User(object):
-    '''
-    Represent a user.
-    init whit login, have session
-    '''
-
-    def __init__(self, email):
-        self.signed_in = False
-        self.email = email
-        self.db = connect_db()
-
-    def signin(self, pwss):
-        error = None
-        cur = self.db.cursor()
-
-        email_ = cur.execute(u"SELECT EXISTS ( SELECT email FROM userdata where email = ?)", (self.email, ) ).fetchone()
-        if email_[0] == 0:
-            error = "Invalid"
-        else:
-            pwss_ = cur.execute(u"SELECT EXISTS ( SELECT password FROM userdata where email = ?)", (self.email, ) ).fetchone()
-            if pwss_[0] == pwss:
-                error = "Invalid"
-            else:
-                session['logged_in'] = True
-                self.signed_in = True
-                self.name = self.db.execute('select username from userdata where email=\'' + request.form['email'] + '\'').fetchone()
-                flash('환영해요, ' + self.name[0])
-        return error
-
-    def signup(self, uid, name, email, pwss):
-        error = None
-        cur = self.db.cursor()
-
-        if '' in [email, name, pwss, uid]:
-            error = "필드가 비어있어요"
-        elif not "@" in email:
-            error = "메일 형식이 올바르지 않아요"
-        else:
-            email_ = cur.execute(u'SELECT EXISTS (SELECT email FROM userdata WHERE email = ?)', (email, )).fetchone()
-            uid_ = cur.execute(u'SELECT EXISTS (SELECT userid FROM userdata WHERE userid = ?)', (uid, )).fetchone()
-
-            if email_[0] == 0 and uid_[0] == 0:
-                flash('계정이 만들어졌어요, ' + name)
-                self.db.execute('insert into userdata (email, username, userid, password) values (?, ?, ?, ?)', [email, name, uid, pwss])
-                self.db.commit()
-            else:
-                error = "이미 존재하는 아이디/이메일 입니다."
-        return error
-    
-    def changeinfo(self):
-        error = None
-        return redirect(url_for('mypage'))
-
-    def signout(self):
-        error = None
-        return redirect(url_for('signin'))
 
 
+def render_redirect(template, url, result):
+    (func, arg) = result
 
-def connect_db():
-    return sqlite3.connect(app.config['DATABASE'])
+    if func == None:
+        arg = url
 
-def init_db():
-    with closing(connect_db()) as db:
-        with app.open_resource('schema.sql', "r") as f:
-            db.cursor().executescript(f.read())
-        db.commit()
-
-def get_db():
-    if not hasattr(g, 'sqlite_db'):
-        g.sqlite_db = connect_db()
-    return g.sqlite_db
-
-def close_db(error):
-    if hasattr(g, 'sqlite_db'):
-        g.sqlite_db.close()
+    if func == 'error':
+        return render_template(template, error=arg)
+    elif func == 'flash':
+        flash(arg)
+    return redirect(url_for(url))
 
 @app.route('/')
 def front():
-    #db = get_db()
-    #cur = db.execute('select title, text from entries order by id desc')
-    #entries = cur.fetchall()
     return render_template('front.html')
+
+@app.route('/.favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico')
 
 @app.route('/add', methods=['POST'])
 def add_entry():
-    if not session.get('logged_in'):
+    if not session.get('signin'):
         abort(401)
     db = get_db()
     db.execute('insert into entries (title, text) values (?, ?)', [request.form['title'], request.form['text']])
@@ -120,49 +47,59 @@ def add_entry():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    error = None
+    result = (None, None)
     if request.method == 'POST':
-        userid = request.form['userid']
+        uid = request.form['userid']
         name = request.form['username']
         email = request.form['email']
         pwss = request.form['password']
         chkbox = request.form.getlist('chkbox')
         if(len(chkbox)):
-            user = User(email)
-            error = user.signup(userid, name, email, pwss)
+            user = User(db.connect_db(), uid)
+            result = user.signup(uid, name, email, pwss)
         else:
-            error = '약관에 동의해야합니다.'
-        return render_redirect('signup.html', 'signin', error)
+            result = ('error', '약관에 동의해야합니다.')
+        return render_redirect('signup.html', 'signin', result)
 
     else:
-        return render_template('signup.html', error=error)
+        return render_template('signup.html', error=None)
 
 @app.route('/signin', methods=['GET', 'POST'])
 def signin():
-    error = None
+    result = (None, None)
     if request.method == 'POST':
-        email = request.form['email']
+        uid = request.form['userid']
         pwss = request.form['password']
-        if "" in [email, pwss]:
-            error = 'Empty Filed'
+        if "" in [uid, pwss]:
+            result = ('error', 'Empty Filed')
         else:
-            user = User(email)
-            error = user.signin(pwss)
-        return render_redirect('signin.html', 'front', error)
+            user = User(db.connect_db(), uid)
+            result = user.signin(pwss)
+            session['signin'] = user.session_signin
+        return render_redirect('signin.html', 'front', result)
     else:
-        return render_template('signin.html', error=error)
+        return render_template('signin.html', error=None)
 
 @app.route('/signout')
 def signout():
-    session.pop('logged_in', None)
-    flash('Sign out')
+    if session['signin']:
+        session.pop('signin', None)
+        flash('로그아웃 되었습니다.')
     return redirect(url_for('front'))
 
 @app.route('/mypage')
 def mypage():
-    error = None
+    result = (None, None)
+    return render_template('mypage.html', error=None)
 
-    return render_template('mypage.html', error=error)
-
-if __name__ == "__main__":
-	app.run(host='0.0.0.0', port=80)
+if __name__ == '__main__':
+    app.config.update(dict(
+        DATABASE=os.path.join(app.root_path, 'flaskr.db'),
+        DEBUG=True,
+        SECRET_KEY='development key',
+        USERNAME='admin',
+        PASSWORD='default'
+    ))
+    app.config.from_envvar('FLASKR_SETTINGS', silent=True)
+    db = database(app)
+    app.run(host='0.0.0.0', port=80)
