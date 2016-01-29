@@ -45,6 +45,17 @@ def add_entry():
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
 
+@app.route('/about')
+def about():
+    result = (None, None)
+    return render_template('about.html', error=None)
+    
+
+@app.route('/contact')
+def contact():
+    result = (None, None)
+    return render_template('contact.html', error=None)
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     result = (None, None)
@@ -62,7 +73,12 @@ def signup():
         return render_redirect('signup.html', 'signin', result)
 
     else:
-        return render_template('signup.html', error=None)
+        try:
+            if session['signin']:
+                flash('비정상적인 시도입니다.')
+                return redirect(url_for('front'))
+        except:
+            return render_template('signup.html', error=None)
 
 @app.route('/signin', methods=['GET', 'POST'])
 def signin():
@@ -78,14 +94,23 @@ def signin():
             session['signin'] = user.session_signin
         return render_redirect('signin.html', 'front', result)
     else:
-        return render_template('signin.html', error=None)
+        try:
+            if session['signin']:
+                flash('비정상적인 시도입니다.')
+                return redirect(url_for('front'))
+        except:
+            return render_template('signin.html', error=None)
 
 @app.route('/signout')
 def signout():
-    if session['signin']:
-        session.pop('signin', None)
-        flash('로그아웃 되었습니다.')
-    return redirect(url_for('front'))
+    try:
+        if session['signin']:
+            session.pop('signin', None)
+            flash('로그아웃 되었습니다.')
+            return redirect(url_for('front'))
+    except:
+        flash('비정상적인 시도입니다.')
+        return redirect(url_for('front'))
 
 @app.route('/mypage')
 def mypage():
@@ -94,7 +119,7 @@ def mypage():
 
 if __name__ == '__main__':
     app.config.update(dict(
-        DATABASE=os.path.join(app.root_path, 'flaskr.db'),
+        DATABASE=os.path.join(app.root_path, 'whaleBank.db'),
         DEBUG=True,
         SECRET_KEY='development key',
         USERNAME='admin',

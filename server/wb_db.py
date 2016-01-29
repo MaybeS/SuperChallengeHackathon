@@ -18,7 +18,7 @@ class database(object):
 
     def init_db(self):
         with closing(self.connect_db()) as db:
-            with self.app.open_resource('schema.sql', "r") as f:
+            with self.app.open_resource('whaleBank.sql', "r") as f:
                 db.cursor().executescript(f.read())
             db.commit()
 
@@ -33,12 +33,12 @@ class database(object):
 
 if __name__ == '__main__':
     #remove exsist db file
-    if path.exists('flaskr.db'):
-        remove('flaskr.db')
+    if path.exists('whaleBank.db'):
+        remove('whaleBank.db')
     #init app
     app = Flask(__name__)
     app.config.update(dict(
-        DATABASE=path.join(app.root_path, 'flaskr.db'),
+        DATABASE=path.join(app.root_path, 'whaleBank.db'),
         DEBUG=True,
         SECRET_KEY='development key',
         USERNAME='admin',
