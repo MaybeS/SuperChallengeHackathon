@@ -24,12 +24,14 @@
 	background-color: rgb(240,240,240);
 }
 .inner-content {
-	margin: 0px auto;
-	margin-top: 15px;
+	margin: 5px auto;
 	padding: 5px 5px 5px 5px;
 	width: 350px;	
 	border-radius: 3px;
 	background-color: rgb(225,225,225);
+}
+.inner-content label {
+	margin: 10px auto;
 }
 @media screen and (max-width: 600px) {
 	.main-content {
@@ -47,8 +49,13 @@
 	}
 }
 
+.icons {
+	margin-left: 15px;
+	cursor: pointer;
+	font-size: 18px;
+}
+
 .link {
-	margin-top: 25px;
 	font-size: 14px;
 }
 
@@ -65,4 +72,13 @@
 .text-comment {
 	padding: 10px 10px 10px 10px;
 	font-size: 16px;
+}
+#calendar-over {
+	margin: 0px auto;
+	padding: 25px 25px 25px 25px;
+	width: 750px;
+	border-radius: 10px;
+	background-color: rgb(245,245,245);
+}
+#calendar {
 }

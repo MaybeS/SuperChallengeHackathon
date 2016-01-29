@@ -10,6 +10,7 @@ import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
 from contextlib import closing
 from wb_user import User
+from wb_bank import Bank
 from wb_db import database
 
 app = Flask(__name__)
@@ -26,6 +27,15 @@ def render_redirect(template, url, result):
         flash(arg)
     return redirect(url_for(url))
 
+def session_out(url):
+    try:
+        if session['signin'] == False or session['sigin'] == True:
+            flash('비정상적인 시도입니다.')
+            session.pop('signin', None)
+            return redirect(url_for('front'))
+    except:
+        return render_template(url, error=None)
+
 @app.route('/')
 def front():
     return render_template('front.html')
@@ -33,16 +43,6 @@ def front():
 @app.route('/.favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico')
-
-@app.route('/add', methods=['POST'])
-def add_entry():
-    if not session.get('signin'):
-        abort(401)
-    db = get_db()
-    db.execute('insert into entries (title, text) values (?, ?)', [request.form['title'], request.form['text']])
-    db.commit()
-    flash('New entry was successfully posted')
-    return redirect(url_for('show_entries'))
 
 @app.route('/about')
 def about():
@@ -70,14 +70,8 @@ def signup():
         else:
             result = ('error', '약관에 동의해야합니다.')
         return render_redirect('signup.html', 'signin', result)
-
     else:
-        try:
-            if session['signin']:
-                flash('비정상적인 시도입니다.')
-                return redirect(url_for('front'))
-        except:
-            return render_template('signup.html', error=None)
+        return session_out('signup.html')
 
 @app.route('/signin', methods=['GET', 'POST'])
 def signin():
@@ -95,12 +89,7 @@ def signin():
             session['username'] = user.name
         return render_redirect('signin.html', 'front', result)
     else:
-        try:
-            if session['signin']:
-                flash('비정상적인 시도입니다.')
-                return redirect(url_for('front'))
-        except:
-            return render_template('signin.html', error=None)
+        return session_out('signin.html')
 
 @app.route('/signout')
 def signout():
@@ -116,7 +105,14 @@ def signout():
 @app.route('/mypage')
 def mypage():
     result = (None, None)
-    return render_template('mypage.html', error=None)
+    try:
+        if(session['uid']):
+            bank = Bank(db.connect_db(), session['uid'])
+            blist = bank.banklist()
+            return render_template('mypage.html', entries=blist, error=None)
+    except:
+        flash('비정상적인 시도입니다.')
+        return redirect(url_for('front'))
 
 @app.route('/bankreg', methods=['GET', 'POST'])
 def bankreg():
@@ -126,8 +122,7 @@ def bankreg():
         bankid = request.form['bankid']
         bankid = bankid.replace('-', '')
         bank = Bank(db.connect_db(), session['uid'])
-        
-        flash(bankname + bankid)
+        result = bank.register(bankid, bankname)
         return render_redirect('bankreg.html', 'mypage', result)
     else:
         try:
@@ -136,6 +131,32 @@ def bankreg():
         except:
             flash('비정상적인 시도입니다.')
             return redirect(url_for('front'))
+
+@app.route('/banksetting', methods=['GET', 'POST'])
+def banksetting():
+    result = (None, None)
+    return render_template('banksetting.html', error=None)
+
+@app.route('/bankdetail/<bid>', methods=['GET', 'POST'])
+def bankdetail(bid):
+    result = (None, None)
+    try:
+        if request.method == 'POST' or bid:
+            bank = Bank(db.connect_db(), session['uid'])
+            result = bank.entrance(bid)
+            (msg, arg) = result
+            session['bid'] = bank.bankid
+            datas = bank.bankdata()
+            if msg == None:
+                return render_template('bankdetail.html', entries=(bid, bank.bankname), datas=datas, error=None)
+            else:
+                raise 'TypeError'
+        else:
+            raise 'TypeError'
+    except:
+        flash('비정상적인 시도입니다.')
+        return redirect(url_for('front'))
+
 
 if __name__ == '__main__':
     app.config.update(dict(

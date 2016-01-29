@@ -12,3 +12,9 @@ create table bank (
   bankname text not null,
   uid text not null
 );
+create table bankdata (
+  id integer primary key autoincrement,
+  bankid text not null,
+  time text not null,
+  value integer
+);

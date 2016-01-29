@@ -1,0 +1,88 @@
+{% extends "layout.html" %}
+{% block body %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/page.css') }}">
+<script src="{{ url_for('static', filename='js/Chart.js') }}"></script>
+<script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
+<script type="text/javascript">
+	window.onLoad = function() {
+		alert("test()");
+		init();
+	};
+
+	function init() {
+		alert("init()");
+		var ctx = $("#myChart").get(0).getContext("2d");
+
+		var data = {
+			labels: ["January", "February", "March", "April", "May", "June", "July"],
+			datasets: [
+			{
+				fillColor: "rgba(220,220,220,0.5)",
+				strokeColor: "rgba(220,220,220,1)",
+				pointColor: "rgba(220,220,220,1)",
+				pointStrokeColor: "#fff",
+				data: [65, 59, 90, 81, 56, 55, 40]
+			}
+			]
+		}
+
+		var myNewChart = new Chart(ctx).Line(data);
+	}
+
+</script>	
+<div class="text-center">
+
+	{% if session.signin %}
+	{% if error %}<p class="error"><strong>Error:</strong> {{ error }}{% endif %}
+	<form action="{{ url_for('bankdetail', bid='{{ bid }}') }}" method="post">
+		<div class="main-content">
+			<div class="title">
+				<h2>{{ entries.1 }}</h2>
+				<div class="inner-content">
+					<label id="bid" class="text">고유 번호: {{ entries.0 }}</label>
+				</div>
+			</div>
+		</div>
+		<div class="calendar">
+
+			<div>
+				<section>
+					<article>
+						<canvas id="myChart" width="400" height="400">
+						</canvas>
+					</article>
+				</section>
+			</div>
+		</div>
+
+		{% if datas %}
+		{% for data in datas %}
+		<div class="sub-content">
+			{{ data.0 }}
+			{{ data.1 }}
+			{{ data.2 }}
+			{{ data.3 }}
+		</div>
+		{% endfor %}
+		{% else %}
+		<div class="sub-content">
+			아직 아무런 기록도 없어요.
+		</div>
+		{% endif %}
+	</form>
+	{% else %}
+	<div class="main-content">
+		<h2>로그인되지 않았습니다.</h2>
+		<div class="inner-content">
+			이미 아이디가 있으신가요?
+			<a id="signup" class="link text" href="{{ url_for('signin') }}">로그인하세요</a>
+		</div>
+		<div class="inner-content">
+			아직 아이디가 없으신가요?
+			<a id="signup" class="link text" href="{{ url_for('signup') }}">새로 만들어보세요</a>
+		</div>
+	</div>
+	{% endif %}
+
+</div>
+{% endblock %}

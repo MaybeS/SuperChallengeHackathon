@@ -4,15 +4,19 @@
 
 <div class="text-center">
   {% if session.signin %}
-    <form action="{{ url_for('add_entry') }}" method="post" class="mypage">
+    <form action="{{ url_for('mypage') }}" method="post" class="mypage">
       {% for entry in entries %}
-        <li><h2>{{ entry.title }}</h2>{{ entry.text|safe }}
+        <div class="main-content">
+          <h2>{{ entry.1 }}</h2>
+          <div class="inner-content">
+            <label id="bid" class="text">고유 번호: {{ entry.0 }}</label>
+            <i id="bankdetail" class="icons fa fa-share-square-o" onclick="location.href = '{{ url_for('bankdetail', bid=entry.0) }}'; return false"></i>
+            <i id="banksetting" class="icons fa fa-cog" onclick="location.href = '{{ url_for('banksetting') }}'; return false"></i>
+          </div>
+        </div>
       {% endfor %}
 
-        <div class="main-content">
-          <h2>{{ username }}의 저금통</h2>
-        </div>
-      <div class="main-content">
+      <div class="sub-content">
         <div class="img-circle img-back" onclick="location.href = '{{ url_for('bankreg') }}'; return false">
           <i class="fa fa-plus img-circle center-img"></i>
         </div>
