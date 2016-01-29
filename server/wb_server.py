@@ -14,7 +14,6 @@ from wb_db import database
 
 app = Flask(__name__)
 
-
 def render_redirect(template, url, result):
     (func, arg) = result
 
@@ -92,6 +91,8 @@ def signin():
             user = User(db.connect_db(), uid)
             result = user.signin(pwss)
             session['signin'] = user.session_signin
+            session['uid'] = user.uid
+            session['username'] = user.name
         return render_redirect('signin.html', 'front', result)
     else:
         try:
@@ -116,6 +117,25 @@ def signout():
 def mypage():
     result = (None, None)
     return render_template('mypage.html', error=None)
+
+@app.route('/bankreg', methods=['GET', 'POST'])
+def bankreg():
+    result = (None, None)
+    if request.method == 'POST':
+        bankname = request.form['bankname']
+        bankid = request.form['bankid']
+        bankid = bankid.replace('-', '')
+        bank = Bank(db.connect_db(), session['uid'])
+        
+        flash(bankname + bankid)
+        return render_redirect('bankreg.html', 'mypage', result)
+    else:
+        try:
+            if session['signin']:
+                return render_template('bankreg.html', error=None)
+        except:
+            flash('비정상적인 시도입니다.')
+            return redirect(url_for('front'))
 
 if __name__ == '__main__':
     app.config.update(dict(

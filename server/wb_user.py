@@ -14,10 +14,12 @@ class User(object):
     def __init__(self, connect_db, uid):
         self.session_signin = False
         self.uid = uid
+        self.name = None
+        self.email = None
         self.db = connect_db
 
     def signin(self, pwss):
-        result = ('None', None)
+        result = (None, None)
         cur = self.db.cursor()
 
         uid_ = cur.execute(u"SELECT EXISTS ( SELECT userid FROM userdata where userid = ?)", (self.uid, ) ).fetchone()
@@ -30,6 +32,7 @@ class User(object):
             else:
                 self.session_signin = True
                 self.name = self.db.execute('select username from userdata where userid=\'' + self.uid + '\'').fetchone()
+                self.email = self.db.execute('select email from userdata where userid=\'' + self.uid + '\'').fetchone()
                 result = ('flash', '환영해요, ' + self.name[0])
         return result
 
@@ -39,7 +42,6 @@ class User(object):
 
         if '' in [email, name, pwss, uid]:
             result = ('error', "필드가 비어있어요.")
-            error = ""
         elif not "@" in email:
             result = ('error', "메일 형식이 올바르지 않아요.")
         else:
@@ -68,7 +70,7 @@ if __name__ == '__main__':
     #init app
     app = Flask(__name__)
     app.config.update(dict(
-        DATABASE=path.join(app.root_path, 'flaskr.db'),
+        DATABASE=path.join(app.root_path, 'whaleBank.db'),
         DEBUG=True,
         SECRET_KEY='development key',
         USERNAME='admin',

@@ -13,7 +13,7 @@
           <h2>{{ username }}의 저금통</h2>
         </div>
       <div class="main-content">
-        <div class="img-circle img-back">
+        <div class="img-circle img-back" onclick="location.href = '{{ url_for('bankreg') }}'; return false">
           <i class="fa fa-plus img-circle center-img"></i>
         </div>
         <h4>새 저금통 등록하기</h4>

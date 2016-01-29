@@ -9,5 +9,6 @@ create table userdata (
 create table bank (
   id integer primary key autoincrement,
   bankid text not null,
-  userid text not null
+  bankname text not null,
+  uid text not null
 );

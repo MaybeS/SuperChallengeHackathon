@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block body %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/page.css') }}">
+
+<div class="text-center">
+
+  {% if error %}<p class="error"><strong>Error:</strong> {{ error }}{% endif %}
+  <form action="{{ url_for('bankreg') }}" method="post">
+    <div class="main-content">
+      <h2>여기서 저금통을 등록합니다.</h2>
+
+        <label class="text pull-left">저금통 이름</label>
+        <input class="form-control" type="text" name="bankname">
+      
+        <label class="text pull-left">저금통 고유 번호</label>
+        <input class="form-control" type="text" name="bankid">
+
+		<div class="bg-info">
+			<p class="text-comment">저금통 고유 번호는 저금통의 뒷면에 적혀있습니다.</p>
+		</div>
+      <div class="btn-space">
+        <input id="login" class="btn btn-success" type="submit" value="등록">
+      </div>	
+    </div>
+
+  </form>
+
+</div>
+{% endblock %}
