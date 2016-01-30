@@ -18,6 +18,7 @@
 .sub-content {
 	margin: 0px auto;
 	margin-top: 15px;
+	margin-bottom: 15px;
 	padding: 15px 15px 15px 15px;
 	width: 500px;
 	border-radius: 10px;
@@ -32,6 +33,7 @@
 }
 .inner-content label {
 	margin: 10px auto;
+	font-size: 12px;
 }
 @media screen and (max-width: 600px) {
 	.main-content {
@@ -47,6 +49,73 @@
 	.inner-content {
 		width: 70%;
 	}
+}
+
+.bank-day {
+	margin: 0px auto;
+	margin-top: 5px;
+	margin-bottom: 15px;
+	padding: 12px 10px 12px 10px;
+	width: 500px;
+	height: 100px;
+	border-radius: 10px;
+	background-color: rgb(240,240,240);
+}
+.bank-day-wrap {
+	height: 80px;
+	float: left;
+	border-right: 3px solid;
+}
+.bank-day-day {
+	font-size: 16px;
+	margin: 0px 5px 0px 5px;
+	width: 75px;
+	height: 75px;
+	float: left;
+	padding: 25px 5px 25px 5px;
+}
+.bank-day-data {
+	margin: 0px 5px 0px 5px;
+	width: 75px;
+	height: 75px;
+	border: 1px solid;
+	border-color: rgb(195,195,195);
+	float: left;
+	padding: 25px 5px 25px 5px;
+	border-radius: 7px;
+	background-color: rgb(225,225,225);
+}
+.bank-day-data:hover {
+	border: 2px solid black;
+}
+.bank-day-result {
+	margin: 0px 5px 0px 5px;
+	width: 75px;
+	height: 75px;
+	border: 1px solid;
+	border-color: rgb(255,255,255);
+	float: right;
+	vertical-align: middle;
+	padding: 25px 5px 25px 5px;
+	border-radius: 15px;
+	background-color: rgb(235,235,235);
+}
+.bank-day-result:hover {
+	border: 2px solid black;
+}
+
+.bank-data-great {
+	background-color: #256fe7;
+	color: #dddddd;
+}
+.bank-data-good {
+	background-color: #d9edf7;
+}
+.bank-data-normal {
+	background-color: #fcf8e3;
+}
+.bank-data-bad {
+	background-color: #f2dede;
 }
 
 .icons {
@@ -81,4 +150,25 @@
 	background-color: rgb(245,245,245);
 }
 #calendar {
+}
+
+.arc {
+	border: 1px solid white;
+}
+.arc:hover {
+	border: 1px solid;
+	background-color: #9fd8f0;
+}
+.arcc {
+	border: 2px solid;
+	background-color: #dff0d8;
+}
+.arcc:hover {
+	border: 2px solid;
+}
+.arc .fa {
+	margin-top: 20px;
+	margin-left: 15px;
+	font-size: 64px;
+	float: left;
 }

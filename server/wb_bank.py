@@ -24,13 +24,11 @@ class Bank(object):
 
 		if '' in [bankid, bankname]:
 		    result = ('error', "필드가 비어있어요.")
-		elif len(self.bankid) != 12:
+		elif len(self.bankid) != 11:
 			result = ('error', "바르지 않은 저금통 고유 번호입니다.")
 		else:
-			print(self.bankid)
 			bankid_ = cur.execute(u'SELECT EXISTS (SELECT bankid FROM bank WHERE bankid = ?)', (self.bankid, )).fetchone()
-			bankname_ = cur.execute(u'SELECT EXISTS (SELECT bankname FROM bank WHERE uid = ?)', (self.uid, )).fetchone()
-			print(bankname_)
+			bankname_ = cur.execute(u'SELECT EXISTS (SELECT bankname FROM bank WHERE bankname = ?)', (self.bankname, )).fetchone()
 			if bankid_[0] == 0 and bankname_[0] == 0:
 				result = ('flash', '저금통이 만들어졌어요')
 				self.db.execute('insert into bank (bankid, bankname, uid) values (?, ?, ?)', [self.bankid, self.bankname, self.uid])
@@ -57,5 +55,7 @@ class Bank(object):
 
 	def bankdata(self):
 		cur = self.db.cursor()
-		return cur.execute(u'SELECT * FROM bankdata WHERE bankid = ?', (self.bankid, )).fetchall()
-		    
+		return cur.execute(u'SELECT * FROM bankdata WHERE bankid = ? ORDER BY time DESC', (self.bankid, )).fetchall()
+
+if __name__ == '__main__':
+	print('run itself, c')

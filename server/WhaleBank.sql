@@ -18,3 +18,11 @@ create table bankdata (
   time text not null,
   value integer
 );
+create table hof (
+  id integer primary key autoincrement,
+  uid text not null,
+  bid text not null,
+  time text not null,
+  archive text not null,
+  value integer
+);

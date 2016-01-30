@@ -12,8 +12,10 @@ from contextlib import closing
 from wb_user import User
 from wb_bank import Bank
 from wb_db import database
+from datetime import datetime
 
 app = Flask(__name__)
+db = ""
 
 def render_redirect(template, url, result):
     (func, arg) = result
@@ -137,26 +139,71 @@ def banksetting():
     result = (None, None)
     return render_template('banksetting.html', error=None)
 
+def nowTime():
+    return str(datetime.now())[:10]
+
+@app.route('/bankinput/<bid>/<value>', methods=['GET'])
+def bankinput(bid, value):
+    result = (None, None)
+    dsb = db.connect_db()
+    cur = dsb.cursor()
+    bid_ = cur.execute(u"SELECT EXISTS ( SELECT bankid FROM bank where bankid = ?)", (bid, ) ).fetchone()
+    if bid_[0] != 0:
+        dsb.execute('insert into bankdata (bankid, time, value) values (?, ?, ?)', [bid, nowTime(), value])
+        dsb.commit()
+    print(bid)
+    print(value)
+    return redirect(url_for('front'))
+
 @app.route('/bankdetail/<bid>', methods=['GET', 'POST'])
 def bankdetail(bid):
     result = (None, None)
     try:
-        if request.method == 'POST' or bid:
+        if request.method == 'POST' or len(bid)==11:
             bank = Bank(db.connect_db(), session['uid'])
             result = bank.entrance(bid)
             (msg, arg) = result
             session['bid'] = bank.bankid
             datas = bank.bankdata()
+            dataes = []
+            dayta = []
+            for (pid, bid, date, value) in datas:
+                if len(dayta) and dayta[0][2] != date[5:]:
+                    dataes.append(dayta)
+                    dayta = []
+                dayta.append((pid, bid, date[5:], value))
+            dataes.append(dayta)
             if msg == None:
-                return render_template('bankdetail.html', entries=(bid, bank.bankname), datas=datas, error=None)
+                return render_template('bankdetail.html', entries=(bid, bank.bankname), dataes=dataes, error=msg)
             else:
                 raise 'TypeError'
         else:
-            raise 'TypeError'
+            return redirect(url_for(bid))
     except:
         flash('비정상적인 시도입니다.')
         return redirect(url_for('front'))
 
+@app.route('/hof')
+def hof():
+    result = (None, None)
+    dsb = db.connect_db()
+    cur = dsb.cursor()
+    entries = cur.execute(u'SELECT * FROM hof ORDER BY time').fetchall()
+    return render_template('hof.html', entries=entries, error=None)
+
+@app.route('/archive')
+def archive():
+    result = (None, None)
+    entries = [ ('저금 3회','flag','3일 연속 저금하여 달성할 수 있습니다.'),
+                ('승리자','list-ol','명예의 전당에 입성하여 달성할 수 있습니다.'),
+                ('선의의 경쟁','shield','친구보다 많이 저금하여 달성할 수 있습니다.'),
+                ('업적 3개 달성!','trophy','업적 3개를 달성하여 얻습니다.'),
+                ('친구등록','hashtag','친구를 등록하여 달성할 수 있습니다.'),
+                ('일시불','credit-card-alt','한루에 10000원 이상 저금하여 달성합니다.'),
+                ('출금','university','출금을 하여 달성할 수 있습니다.'),
+                ('생일','birthday-cake','생일날 얻을 수 있습니다.')]
+
+    return render_template('archive.html', entries=entries, error=None)
 
 if __name__ == '__main__':
     app.config.update(dict(

@@ -1,0 +1,36 @@
+{% extends "layout.html" %}
+{% block body %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/page.css') }}">
+
+<div class="text-center">
+
+  {% if error %}<p class="error"><strong>Error:</strong> {{ error }}{% endif %}
+  <form action="{{ url_for('archive') }}" method="post">
+    <div class="main-content">
+      <h2>업적</h2>
+      이곳에 달성한 업적이 기록됩니다.
+    </div>
+	  {% for entry in entries %}
+      <div id="RXM" class="arc sub-content">
+        <i id="RDM" class="fa fa-"></i>
+        <script type="text/javascript">
+          document.getElementById("RDM").className += "{{ entry.1 }}";
+          document.getElementById("RDM").setAttribute("id", "BDM");
+
+          if("{{ entry.1 }}" == "flag" || "{{ entry.1 }}" == "hashtag")
+          {
+          document.getElementById("RXM").className += " arcc";
+
+          }
+          document.getElementById("RXM").setAttribute("id", "RRXM");
+        </script>
+        <div class="archive">
+          <h2>{{ entry.0 }}</h2>
+          <label class="text">{{ entry.2 }}</label>
+        </div>
+      </div>
+	  {% endfor %}
+  </form>
+
+</div>
+{% endblock %}

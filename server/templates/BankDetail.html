@@ -1,35 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/page.css') }}">
-<script src="{{ url_for('static', filename='js/Chart.js') }}"></script>
-<script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
-<script type="text/javascript">
-	window.onLoad = function() {
-		alert("test()");
-		init();
-	};
 
-	function init() {
-		alert("init()");
-		var ctx = $("#myChart").get(0).getContext("2d");
-
-		var data = {
-			labels: ["January", "February", "March", "April", "May", "June", "July"],
-			datasets: [
-			{
-				fillColor: "rgba(220,220,220,0.5)",
-				strokeColor: "rgba(220,220,220,1)",
-				pointColor: "rgba(220,220,220,1)",
-				pointStrokeColor: "#fff",
-				data: [65, 59, 90, 81, 56, 55, 40]
-			}
-			]
-		}
-
-		var myNewChart = new Chart(ctx).Line(data);
-	}
-
-</script>	
 <div class="text-center">
 
 	{% if session.signin %}
@@ -43,31 +15,73 @@
 				</div>
 			</div>
 		</div>
-		<div class="calendar">
 
-			<div>
-				<section>
-					<article>
-						<canvas id="myChart" width="400" height="400">
-						</canvas>
-					</article>
-				</section>
-			</div>
-		</div>
-
-		{% if datas %}
-		{% for data in datas %}
-		<div class="sub-content">
-			{{ data.0 }}
-			{{ data.1 }}
-			{{ data.2 }}
-			{{ data.3 }}
-		</div>
-		{% endfor %}
+		{% if dataes %}
+			<script type="text/javascript">
+				var tt = 0;
+				var dt = 0;
+				function add(value) {
+					tt+=value;
+				};
+				function get() {
+					return tt;
+				};
+				function argb(sss){
+					alert(sss);
+					return "rgb(95,0,2)";
+				};
+				function grgb(r, g, b){
+					return "rgb("+Math.max(0,Math.min(r, 255))+","+Math.max(200,Math.min(g, 255))+","+Math.max(100,Math.min(b, 255))+")";
+				};
+			</script>
+			{% for datas in dataes %}
+				{% if datas %}
+					<div class="bank-day">
+						<div class="bank-day-wrap">
+							<div id="BDD" class="bank-day-day">
+								{{ datas.0.2 }}
+							</div>
+						</div>
+						<script type="text/javascript">
+							if(dt != 0){
+								document.getElementById("BDD").id = "X{{ datas.0.2 }}";
+								document.getElementById("X{{ datas.0.2 }}").style.backgroundColor=rgb(255 - (tt / 5), 255 - (tt / 10) , 255 - (tt / 7));
+							}
+						</script>
+						{% for data in datas %}
+							<div class="bank-day-data">
+								{{ data.3 }}
+								<script type="text/javascript">
+									add({{ data.3 }});
+								</script>
+							</div>
+						{% endfor %}
+						<div id="BDR" class="bank-day-result">
+							<script type="text/javascript">
+								document.write(get());
+							</script>
+						</div>
+						<script type="text/javascript">
+							if (tt < 300){
+								document.getElementById("BDR").className += " bank-data-bad";
+							} else if (tt < 500){
+								document.getElementById("BDR").className += " bank-data-normal";
+							} else if (tt < 1000){
+								document.getElementById("BDR").className += " bank-data-good";
+							} else{
+								document.getElementById("BDR").className += " bank-data-great";
+							}
+							document.getElementById("BDR").setAttribute("id", "BDRD");
+							tt = 0;
+						</script>
+					</div>
+					<script type="text/javascript">dt = {{ datas.02 }};</script>
+				{% endif %}
+			{% endfor %}
 		{% else %}
-		<div class="sub-content">
-			아직 아무런 기록도 없어요.
-		</div>
+			<div class="sub-content">
+				아직 아무런 기록도 없어요.
+			</div>
 		{% endif %}
 	</form>
 	{% else %}

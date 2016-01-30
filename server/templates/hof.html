@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block body %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/page.css') }}">
+
+<div class="text-center">
+
+  {% if error %}<p class="error"><strong>Error:</strong> {{ error }}{% endif %}
+  <form action="{{ url_for('hof') }}" method="post">
+    <div class="main-content">
+      <h2>명예의 전당</h2>
+      명예의 전당에는 일일 목표를 많이 달성했거나 성실히 저금한 사람들의 이름이 공개되는 곳 입니다.
+    </div>
+	  {% for entry in entries %}
+	  	<div class="sub-content">
+	  		{{ entry.1 }}이(가) {{ entry.4 }}원을 달성하여 명예에 전당에 등록되었습니다.
+	  	</div>
+	  {% endfor %}
+  </form>
+
+</div>
+{% endblock %}
